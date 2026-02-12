@@ -1,0 +1,82 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/eventbus
+
+eventbus:
+  shutdown-timeout-ms: 30000
+  bindings:
+    orders:
+      topic: orders.events
+      group-id: order-processing-group
+      listener-type: BATCH
+      ack-mode: MANUAL_IMMEDIATE
+      concurrency: 3
+      max-poll-records: 200
+      max-poll-interval-ms: 600000
+      session-timeout-ms: 45000
+      heartbeat-interval-ms: 10000
+      auto-startup: true
+      static-membership: true
+      batch-failure-strategy: SEEK_TO_FAILED
+      ordering-mode: RELAXED_IN_RETRY
+      poll-interval-safety-threshold: 0.7
+      retry:
+        tier0:
+          max-attempts: 3
+          initial-backoff-ms: 100
+          multiplier: 2.0
+          max-backoff-ms: 2000
+        tiers:
+          - delay-ms: 10000
+            max-attempts: 3
+            topic-suffix: retry-1
+            concurrency: 1
+          - delay-ms: 60000
+            max-attempts: 3
+            topic-suffix: retry-2
+            concurrency: 1
+          - delay-ms: 300000
+            max-attempts: 3
+            topic-suffix: retry-3
+            concurrency: 1
+        retryable-exceptions:
+          - java.net.SocketTimeoutException
+          - org.springframework.dao.OptimisticLockingFailureException
+        non-retryable-exceptions:
+          - java.lang.IllegalArgumentException
+        skip-to-tier-mapping:
+          javax.ws.rs.ServiceUnavailableException: 2
+      circuit-breaker:
+        enabled: true
+        failure-rate-threshold: 50.0
+        slow-call-rate-threshold: 80.0
+        slow-call-duration-ms: 5000
+        wait-duration-in-open-state-ms: 60000
+        sliding-window-size: 100
+        minimum-number-of-calls: 10
+        permitted-number-of-calls-in-half-open-state: 5
+        automatic-pause-on-open: true
+      dlt:
+        topic-suffix: DLT
+        strategy: ALERT_AND_STORE
+        replay:
+          max-replays: 3
+          cooldown-ms: 3600000
+          batch-size: 100
+
+    # Minimal config — uses all defaults
+    notifications:
+      topic: notification.events
+      group-id: notification-group
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  health:
+    eventbus:
+      enabled: true
