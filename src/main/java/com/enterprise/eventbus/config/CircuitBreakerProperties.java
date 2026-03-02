@@ -2,9 +2,9 @@ package com.enterprise.eventbus.config;
 
 public class CircuitBreakerProperties {
 
-    private boolean enabled = false;
-    private float failureRateThreshold = 50.0f;
-    private float slowCallRateThreshold = 80.0f;
+    private boolean enabled;
+    private float failureRateThreshold = 50.0F;
+    private float slowCallRateThreshold = 80.0F;
     private long slowCallDurationMs = 5000L;
     private long waitDurationInOpenStateMs = 60_000L;
     private int slidingWindowSize = 100;

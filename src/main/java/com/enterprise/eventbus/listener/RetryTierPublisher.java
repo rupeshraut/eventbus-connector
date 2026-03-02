@@ -90,8 +90,12 @@ public class RetryTierPublisher {
     }
 
     private byte[] extractBytes(Object value) {
-        if (value == null) return new byte[0];
-        if (value instanceof byte[] bytes) return bytes;
+        if (value == null) {
+            return new byte[0];
+        }
+        if (value instanceof byte[] bytes) {
+            return bytes;
+        }
         return value.toString().getBytes(StandardCharsets.UTF_8);
     }
 }

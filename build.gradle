@@ -2,10 +2,15 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.openrewrite.rewrite' version '6.24.0'
 }
 
 group = 'com.enterprise'
 version = '1.0.0-SNAPSHOT'
+
+rewrite {
+    activeRecipe('org.openrewrite.staticanalysis.CommonStaticAnalysis')
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -50,6 +55,8 @@ dependencies {
 
     // Configuration Processor
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    rewrite 'org.openrewrite.recipe:rewrite-static-analysis:1.19.0'
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

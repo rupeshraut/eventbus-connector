@@ -28,7 +28,9 @@ public class EventBusRebalanceListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-        if (partitions.isEmpty()) return;
+        if (partitions.isEmpty()) {
+            return;
+        }
 
         log.info("Partitions revoked for binding '{}': {}", bindingName, partitions);
 
@@ -47,7 +49,9 @@ public class EventBusRebalanceListener implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-        if (partitions.isEmpty()) return;
+        if (partitions.isEmpty()) {
+            return;
+        }
 
         log.info("Partitions assigned to binding '{}': {}", bindingName, partitions);
 

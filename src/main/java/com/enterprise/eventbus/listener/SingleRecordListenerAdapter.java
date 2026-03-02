@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.listener.AcknowledgingMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class SingleRecordListenerAdapter<K, V> implements AcknowledgingMessageLi
             // Step 2: Process with Resilience4j decoration
             processingTimer.record(() -> {
                 try {
-                    resilienceDecorator.execute(r -> handler.handle(r), record);
+                    resilienceDecorator.execute(handler::handle, record);
                     processedCounter.increment();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
@@ -93,7 +92,7 @@ public class SingleRecordListenerAdapter<K, V> implements AcknowledgingMessageLi
             acknowledgment.acknowledge();
 
         } catch (Exception ex) {
-            Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
+            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
             failedCounter.increment();
             handleFailure(record, acknowledgment, cause);
         } finally {
@@ -136,7 +135,7 @@ public class SingleRecordListenerAdapter<K, V> implements AcknowledgingMessageLi
 
     private boolean isDeserializationFailure(ConsumerRecord<K, V> record) {
         return record.headers().lastHeader(
-                ErrorHandlingDeserializer.VALUE_DESERIALIZER_EXCEPTION_HEADER) != null;
+                "springDeserializerExceptionValue") != null;
     }
 
     private void handleDeserializationFailure(ConsumerRecord<K, V> record,

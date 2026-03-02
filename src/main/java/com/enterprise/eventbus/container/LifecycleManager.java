@@ -120,7 +120,9 @@ public class LifecycleManager {
     public void pauseForCircuitBreaker(String bindingName) {
         withLock(bindingName, () -> {
             var reg = registry.get(bindingName).orElse(null);
-            if (reg == null || reg.state() != ContainerState.RUNNING) return;
+            if (reg == null || reg.state() != ContainerState.RUNNING) {
+                return;
+            }
 
             log.warn("Circuit breaker triggered PAUSE for binding '{}'", bindingName);
             reg.mainContainer().pause();
@@ -135,7 +137,9 @@ public class LifecycleManager {
     public void resumeForCircuitBreaker(String bindingName) {
         withLock(bindingName, () -> {
             var reg = registry.get(bindingName).orElse(null);
-            if (reg == null || reg.state() != ContainerState.PAUSED) return;
+            if (reg == null || reg.state() != ContainerState.PAUSED) {
+                return;
+            }
 
             log.info("Circuit breaker triggered RESUME for binding '{}'", bindingName);
             reg.mainContainer().resume();

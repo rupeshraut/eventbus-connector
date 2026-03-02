@@ -46,7 +46,7 @@ public class DltDocumentEntity {
 
     private List<TierFailureRecord> tierHistory;
 
-    private int replayCount = 0;
+    private int replayCount;
 
     @Indexed
     private Instant createdAt;
