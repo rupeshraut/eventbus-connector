@@ -1,0 +1,9 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: com.enterprise.eventbus.AddProxyBeanMethodsFalse
+displayName: Add proxyBeanMethods=false to @Configuration classes
+description: Prevents Spring CGLIB subclassing of @Configuration classes, reducing startup overhead.
+recipeList:
+  - org.openrewrite.java.AddOrUpdateAnnotationAttribute:
+      annotationType: org.springframework.context.annotation.Configuration
+      attributeName: proxyBeanMethods
+      attributeValue: "false"
