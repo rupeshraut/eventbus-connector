@@ -100,7 +100,7 @@ public class BatchRecordListenerAdapter<K, V>
                 // Process with Resilience4j
                 processingTimer.record(() -> {
                     try {
-                        resilienceDecorator.execute(r -> handler.handle(r), record);
+                        resilienceDecorator.execute(handler::handle, record);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -110,18 +110,15 @@ public class BatchRecordListenerAdapter<K, V>
                 processedCounter.increment();
 
             } catch (Exception ex) {
-                Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
+                Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                 failedCounter.increment();
 
-                switch (failureStrategy) {
-                    case SEEK_TO_FAILED -> {
-                        handleSeekToFailed(offsetManager, record, i, consumer, acknowledgment, cause);
-                        return; // Exit batch processing
-                    }
-                    case DLQ_AND_CONTINUE -> {
-                        handleDlqAndContinue(record, cause);
-                        offsetManager.markProcessed(record); // Mark as handled (DLQ'd)
-                    }
+                if (failureStrategy == BatchFailureStrategy.SEEK_TO_FAILED) {
+                    handleSeekToFailed(offsetManager, record, i, consumer, acknowledgment, cause);
+                    return;
+                } else if (failureStrategy == BatchFailureStrategy.DLQ_AND_CONTINUE) {
+                    handleDlqAndContinue(record, cause);
+                    offsetManager.markProcessed(record);
                 }
             } finally {
                 MdcContextPropagator.clear();

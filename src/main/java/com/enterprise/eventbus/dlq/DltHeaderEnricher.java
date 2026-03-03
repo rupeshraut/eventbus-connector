@@ -107,7 +107,9 @@ public final class DltHeaderEnricher {
     }
 
     private static String truncate(String value, int maxLen) {
-        if (value == null) return "";
+        if (value == null) {
+            return "";
+        }
         return value.length() <= maxLen ? value : value.substring(0, maxLen) + "...";
     }
 

@@ -163,13 +163,19 @@ public class DltPublisher {
     }
 
     private byte[] extractBytes(Object value) {
-        if (value == null) return new byte[0];
-        if (value instanceof byte[] bytes) return bytes;
+        if (value == null) {
+            return new byte[0];
+        }
+        if (value instanceof byte[] bytes) {
+            return bytes;
+        }
         return value.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     private String truncate(String value, int max) {
-        if (value == null) return "";
+        if (value == null) {
+            return "";
+        }
         return value.length() <= max ? value : value.substring(0, max) + "...";
     }
 

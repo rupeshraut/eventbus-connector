@@ -162,7 +162,9 @@ public class RetryTierListenerAdapter<K, V> implements AcknowledgingMessageListe
             }
             case SKIP_TO_TIER -> {
                 int target = routing.targetTier();
-                if (target <= tierNumber) target = tierNumber + 1;
+                if (target <= tierNumber) {
+                    target = tierNumber + 1;
+                }
                 if (retryTierPublisher.hasNextTier(target - 1)) {
                     retryTierPublisher.publishToTier(record, target, 1, exception);
                 } else {

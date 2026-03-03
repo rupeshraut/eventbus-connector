@@ -43,7 +43,7 @@ public class ResilienceDecorator {
             try {
                 action.accept(record);
             } catch (Exception e) {
-                throw (e instanceof RuntimeException re) ? re : new RuntimeException(e);
+                throw e instanceof RuntimeException re ? re : new RuntimeException(e);
             }
         });
 

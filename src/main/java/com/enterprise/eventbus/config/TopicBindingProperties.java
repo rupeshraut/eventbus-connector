@@ -41,7 +41,7 @@ public class TopicBindingProperties {
 
     private boolean autoStartup = true;
 
-    private boolean staticMembership = false;
+    private boolean staticMembership;
 
     private String cluster = "default";
 

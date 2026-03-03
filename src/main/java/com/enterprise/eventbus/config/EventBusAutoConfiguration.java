@@ -27,7 +27,7 @@ import java.util.Map;
  * Bootstraps all bindings from application properties on startup
  * and provides graceful shutdown via SmartLifecycle.
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(EventBusProperties.class)
 @ComponentScan(basePackages = "com.enterprise.eventbus")
 @EnableMongoRepositories(basePackages = "com.enterprise.eventbus.dlq")

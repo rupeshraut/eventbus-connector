@@ -64,7 +64,9 @@ public class EventBusAdmin {
 
     public void destroy(String name) {
         var bridge = cbBridges.remove(name);
-        if (bridge != null) bridge.deactivate();
+        if (bridge != null) {
+            bridge.deactivate();
+        }
         lifecycleManager.destroy(name);
     }
 
